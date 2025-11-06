@@ -13,77 +13,84 @@
             <p>AI-powered photo resizer with face detection for 190+ countries</p>
         </header>
 
-        16
-                    <!-- Left Panel: Upload & Controls -->
-                    <div class="left-panel">66
-            <section class="upload-section">
-                <div class="upload-box" id="uploadBox">
-                    <div class="upload-icon">📷</div>
-                    <h3>Upload Your Photo</h3>
-                    <p>Click or drag and drop your photo here</p>
-                    <input type="file" id="photoInput" accept="image/*" hidden>
-                    <button class="btn-primary" onclick="document.getElementById('photoInput').click()">Choose Photo</button>
-                </div>
-            </section>
-
-            <section class="controls-section" id="controlsSection" style="display: none;">
-                <div class="country-selector">
-                    <label for="countrySelect">Select Country:</label>
-                    <select id="countrySelect">
-                        <option value="">-- Select Country --</option>
-                    </select>
-                </div>
-
-                <div class="photo-specs" id="photoSpecs"></div>
-
-                <div class="options-grid">
-                    <div class="option-card">
-                        <h3>Background</h3>
-                        <select id="bgSelect">
-                            <option value="white">White</option>
-                            <option value="blue">Blue</option>
-                            <option value="gray">Gray</option>
-                            <option value="remove">Remove/Transparent</option>
-                        </select>
+        <main>
+            <!-- Left Panel: Upload -->
+            <div class="left-panel">
+                <section class="upload-section">
+                    <div class="upload-box" id="uploadBox">
+                        <div class="upload-icon">📷</div>
+                        <h3>Upload Photo</h3>
+                        <p>Click or drag & drop</p>
+                        <input type="file" id="photoInput" accept="image/*" hidden>
+                        <button class="btn-primary" onclick="document.getElementById('photoInput').click()">Choose Photo</button>
                     </div>
+                </section>
+            </div>
 
-                    <div class="option-card">
-                        <h3>Enhancement</h3>
-                        <label>
-                            <input type="checkbox" id="enhanceCheck" checked>
-                            Auto-enhance quality
-                        </label>
-                    </div>
-
-                    <div class="option-card">
-                        <h3>Export Format</h3>
-                        <select id="formatSelect">
-                            <option value="jpg">JPG</option>
-                            <option value="png">PNG</option>
-                            <option value="jpeg">JPEG</option>
-                        </select>
-                    </div>
+            <!-- Middle Panel: Original Photo -->
+            <div class="middle-panel">
+                <div class="original-preview">
+                    <h3>Original Photo</h3>
+                    <canvas id="originalCanvas"></canvas>
                 </div>
+            </div>
 
-                            </div> <!-- End left-panel -->
-
-            <!-- Right Panel: Preview -->
+            <!-- Right Panel: Options & Processed Photo -->
             <div class="right-panel">
+                <section class="controls-section" id="controlsSection" style="display: none;">
+                    <div class="country-selector">
+                        <label for="countrySelect">Country:</label>
+                        <select id="countrySelect">
+                            <option value="">-- Select --</option>
+                        </select>
+                    </div>
+
+                    <div class="photo-specs" id="photoSpecs"></div>
+
+                    <div class="options-grid">
+                        <div class="option-card">
+                            <h3>Background</h3>
+                            <select id="bgSelect">
+                                <option value="white">White</option>
+                                <option value="blue">Blue</option>
+                                <option value="gray">Gray</option>
+                            </select>
+                        </div>
+
+                        <div class="option-card">
+                            <h3>Enhance</h3>
+                            <label>
+                                <input type="checkbox" id="enhanceCheck" checked>
+                                Auto-enhance
+                            </label>
+                        </div>
+
+                        <div class="option-card">
+                            <h3>Format</h3>
+                            <select id="formatSelect">
+                                <option value="jpg">JPG</option>
+                                <option value="png">PNG</option>
+                                <option value="jpeg">JPEG</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn-primary" id="processBtn">Process Photo</button>
+                        <button class="btn-secondary" id="downloadBtn" style="display: none;">Download</button>
+                        <button class="btn-secondary" id="resetBtn">Reset</button>
+                    </div>
+                </section>
 
                 <div class="preview-container">
+                    <h3>Processed Photo</h3>
                     <canvas id="previewCanvas"></canvas>
                 </div>
-                            </div> <!-- End right-panel -->
-                <div class="action-buttons">
-                    <button class="btn-primary" id="processBtn">Process Photo</button>
-                    <button class="btn-secondary" id="downloadBtn" style="display: none;">Download Photo</button>
-                    <button class="btn-secondary" id="resetBtn">Reset</button>
-                </div>                
-            </section>
+            </div>
         </main>
 
         <footer>
-            <p>Created by D M Jahid | Face detection powered by AI | <a href="https://github.com/dmjahidbd/passport-photo-resizer" target="_blank">GitHub</a></p>
+            <p>Created by D M Jahid | AI-Powered | <a href="https://github.com/dmjahidbd/passport-photo-resizer" target="_blank">GitHub</a></p>
         </footer>
     </div>
 
