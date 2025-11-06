@@ -44,6 +44,24 @@ function setupEventListeners() {
     downloadBtn.addEventListener('click', downloadPhoto);
     resetBtn.addEventListener('click', resetAll);
     countrySelect.addEventListener('change', handleCountryChange);
+        
+    // Background color selector with custom color support
+    const bgSelect = document.getElementById('bgSelect');
+    const customColorPicker = document.getElementById('customColorPicker');
+    
+    bgSelect.addEventListener('change', (e) => {
+        if (e.target.value === 'custom') {
+            customColorPicker.style.display = 'block';
+            customColorPicker.click();
+        } else {
+            customColorPicker.style.display = 'none';
+        }
+    });
+    
+    customColorPicker.addEventListener('change', (e) => {
+        // Store the selected custom color
+        customColorPicker.dataset.selectedColor = e.target.value;
+    });
     
     // Drag and drop support
     const uploadBox = document.getElementById('uploadBox');
@@ -181,8 +199,13 @@ async function processPhoto() {
         
         // Draw background
         const bgColor = document.getElementById('bgSelect').value;
-        ctx.fillStyle = getBackgroundColor(bgColor);
-        ctx.fillRect(0, 0, targetWidth, targetHeight);
+                const backgroundColor = getBackgroundColor(bgColor);
+        
+        // Only fill background if not transparent
+        if (backgroundColor !== 'transparent') {
+                        ctx.fillStyle = backgroundColor;
+            ctx.fillRect(0, 0, targetWidth, targetHeight);
+        }
         
         // Draw and scale image
         ctx.drawImage(uploadedImage, offsetX, offsetY, 
@@ -209,7 +232,8 @@ function getBackgroundColor(color) {
         white: '#FFFFFF',
         blue: '#B0C4DE',
         gray: '#E0E0E0',
-        remove: 'transparent'
+                transparent: 'transparent',
+        custom: document.getElementById('customColorPicker').dataset.selectedColor || '#FFFFFF'
     };
     return colors[color] || '#FFFFFF';
 }
