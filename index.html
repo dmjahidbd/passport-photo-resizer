@@ -14,85 +14,69 @@
         </header>
 
         <main>
-            <!-- Column 1: Upload & Original Photo -->
-            <div class="column-1">
-                <div class="upload-area" id="uploadBox">
+            <section class="upload-section">
+                <div class="upload-box" id="uploadBox">
                     <div class="upload-icon">📷</div>
                     <h3>Upload Your Photo</h3>
-                    <p>Click or drag and drop</p>
+                    <p>Click or drag and drop your photo here</p>
                     <input type="file" id="photoInput" accept="image/*" hidden>
                     <button class="btn-primary" onclick="document.getElementById('photoInput').click()">Choose Photo</button>
                 </div>
+            </section>
 
-                <div class="original-photo-container" id="originalContainer">
-                    <h3>Original Photo</h3>
-                    <canvas id="originalCanvas"></canvas>
-                    <button class="btn-primary" onclick="document.getElementById('photoInput').click()" style="margin-top: 15px;">Change Photo</button>
-                </div>
-            </div>
-
-            <!-- Column 2: Options & Requirements -->
-            <div class="column-2">
-                <div class="option-section">
-                    <h3>Select Country</h3>
-                    <label for="countrySelect">Choose destination country:</label>
+            <section class="controls-section" id="controlsSection" style="display: none;">
+                <div class="country-selector">
+                    <label for="countrySelect">Select Country:</label>
                     <select id="countrySelect">
                         <option value="">-- Select Country --</option>
                     </select>
                 </div>
 
-                <div class="photo-specs" id="photoSpecs" style="display: none;">
-                    <!-- Requirements will be displayed here -->
+                <div class="photo-specs" id="photoSpecs"></div>
+
+                <div class="options-grid">
+                    <div class="option-card">
+                        <h3>Background</h3>
+                        <select id="bgSelect">
+                            <option value="white">White</option>
+                            <option value="blue">Blue</option>
+                            <option value="gray">Gray</option>
+                            <option value="remove">Remove/Transparent</option>
+                        </select>
+                    </div>
+
+                    <div class="option-card">
+                        <h3>Enhancement</h3>
+                        <label>
+                            <input type="checkbox" id="enhanceCheck" checked>
+                            Auto-enhance quality
+                        </label>
+                    </div>
+
+                    <div class="option-card">
+                        <h3>Export Format</h3>
+                        <select id="formatSelect">
+                            <option value="jpg">JPG</option>
+                            <option value="png">PNG</option>
+                            <option value="jpeg">JPEG</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="option-section">
-                    <h3>Background Color</h3>
-                    <select id="bgSelect">
-                        <option value="white">White</option>
-                        <option value="blue">Blue</option>
-                        <option value="gray">Gray</option>
-                                            <option value="transparent">Remove Background</option>
-                    <option value="custom">Custom Color...</option>
-                    </select>
-                                    <input type="color" id="customColorPicker" style="display: none; margin-top: 10px; width: 100%; height: 40px; cursor: pointer;">
-                </div>
-
-                <div class="option-section">
-                    <h3>Enhancement</h3>
-                    <label>
-                        <input type="checkbox" id="enhanceCheck" checked>
-                        Auto-enhance image quality
-                    </label>
-                </div>
-
-                <div class="option-section">
-                    <h3>Export Format</h3>
-                    <select id="formatSelect">
-                        <option value="jpg">JPG</option>
-                        <option value="png">PNG</option>
-                        <option value="jpeg">JPEG</option>
-                    </select>
+                <div class="preview-container">
+                    <canvas id="previewCanvas"></canvas>
                 </div>
 
                 <div class="action-buttons">
                     <button class="btn-primary" id="processBtn">Process Photo</button>
-                    <button class="btn-secondary" id="resetBtn">Reset All</button>
+                    <button class="btn-secondary" id="downloadBtn" style="display: none;">Download Photo</button>
+                    <button class="btn-secondary" id="resetBtn">Reset</button>
                 </div>
-            </div>
-
-            <!-- Column 3: Processed Photo -->
-            <div class="column-3">
-                <div class="processed-photo-container">
-                    <h3>Processed Photo</h3>
-                    <canvas id="previewCanvas"></canvas>
-                    <button class="btn-primary" id="downloadBtn" style="display: none; margin-top: 15px;">Download Photo</button>
-                </div>
-            </div>
+            </section>
         </main>
 
         <footer>
-            <p>Created with ❤️ by D M Jahid | Face detection powered by AI | 
-            <a href="https://github.com/dmjahidbd/passport-photo-resizer" target="_blank">GitHub</a></p>
+            <p>Created by D M Jahid | Face detection powered by AI | <a href="https://github.com/dmjahidbd/passport-photo-resizer" target="_blank">GitHub</a></p>
         </footer>
     </div>
 
