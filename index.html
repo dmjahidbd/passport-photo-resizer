@@ -1,102 +1,369 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Passport Photo Resizer - AI-Powered Tool</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Passport Photo Resizer — One Page (Responsive)</title>
+  <style>
+    :root{
+      --bg:#0f1724; /* dark slate */
+      --card:#0b1220;
+      --accent:#0ea5e9;
+      --muted:#94a3b8;
+      --glass: rgba(255,255,255,0.03);
+      --radius:12px;
+      --gap:16px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#071122 0%, #071026 100%);color:#e6eef8}
+
+    .container{
+      max-width:1200px;margin:28px auto;padding:20px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:16px;box-shadow:0 6px 30px rgba(2,6,23,0.6);
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    header h1{margin:0;font-size:20px}
+    header p{margin:0;color:var(--muted);font-size:13px}
+
+    main{display:grid;grid-template-columns: 1fr 1fr 1fr;gap:var(--gap)}
+
+    /* Cards */
+    .card{background:var(--card);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
+    .upload-box{display:flex;flex-direction:column;align-items:center;justify-content:center;height:280px;border-radius:12px;border:2px dashed rgba(255,255,255,0.03);background:var(--glass);text-align:center;padding:18px;}
+    .upload-box .upload-icon{font-size:42px;margin-bottom:8px}
+    .upload-box h3{margin:6px 0}
+    .upload-box p{color:var(--muted);font-size:13px;margin:0}
+
+    button{font-weight:600}
+    .btn-primary{background:var(--accent);color:#042; padding:10px 16px;border-radius:10px;border:none;cursor:pointer}
+    .btn-secondary{background:transparent;color:var(--muted);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);cursor:pointer}
+
+    .original-preview canvas, .preview-container canvas{width:100%;height:auto;border-radius:10px;background:#0a0a0a}
+    .original-preview h3, .preview-container h3{margin:0 0 8px 0;font-size:14px;color:#cfe8ff}
+
+    .country-selector{display:flex;flex-direction:column;gap:6px}
+    .country-selector select{padding:8px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:inherit}
+
+    .options-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+    .option-card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));padding:10px;border-radius:10px}
+    .photo-specs{margin-top:10px;color:var(--muted);font-size:13px}
+
+    /* Action buttons centered */
+    .action-buttons{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:14px}
+
+    /* Footer */
+    footer{text-align:center;padding:12px;color:var(--muted);font-size:13px}
+
+    /* Responsive stacking */
+    @media (max-width:1000px){
+      main{grid-template-columns:1fr 1fr}
+      .preview-container{order:3}
+    }
+    @media (max-width:760px){
+      main{grid-template-columns:1fr;}
+      header{flex-direction:column;align-items:flex-start}
+      .upload-box{height:220px}
+      .options-grid{grid-template-columns:1fr}
+      .action-buttons{flex-wrap:wrap}
+    }
+
+    /* small helper */
+    .muted{color:var(--muted)}
+    .hidden{display:none}
+
+    /* subtle focus */
+    input:focus,select:focus,button:focus{outline:2px solid rgba(14,165,233,0.12);outline-offset:2px}
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🌍 Passport Photo Resizer</h1>
-            <p>AI-powered photo resizer with face detection for 190+ countries</p>
-        </header>
+  <div class="container">
+    <header>
+      <div>
+        <h1>🌍 Passport Photo Resizer</h1>
+        <p>AI-powered one-page resizer with face-detection & download</p>
+      </div>
+      <div style="margin-left:auto" class="muted">Created by D M Jahid</div>
+    </header>
 
-        <main>
-            <!-- Left Panel: Upload -->
-            <div class="left-panel">
-                <section class="upload-section">
-                    <div class="upload-box" id="uploadBox">
-                        <div class="upload-icon">📷</div>
-                        <h3>Upload Photo</h3>
-                        <p>Click or drag & drop</p>
-                        <input type="file" id="photoInput" accept="image/*" hidden>
-                        <button class="btn-primary" onclick="document.getElementById('photoInput').click()">Choose Photo</button>
-                    </div>
-                </section>
+    <main>
+      <!-- Left: Processed Photo (now left) -->
+      <div class="card">
+        <div class="preview-container">
+          <h3>Processed Photo</h3>
+          <canvas id="previewCanvas" width="413" height="531"></canvas>
+        </div>
+        <div style="margin-top:12px;color:var(--muted);font-size:13px">
+          <div>Download or reset the processed image.</div>
+        </div>
+      </div>
+
+      <!-- Middle: Controls & Options (now center) -->
+      <div class="card">
+        <section id="controlsSection" style="display:none">
+          <div class="country-selector">
+            <label for="countrySelect">Country</label>
+            <select id="countrySelect"><option value="auto">Auto (standard 35x45mm)</option></select>
+          </div>
+
+          <div class="photo-specs" id="photoSpecs">Specs: <span class="muted">—</span></div>
+
+          <div class="options-grid">
+            <div class="option-card">
+              <h4 style="margin:0 0 8px 0">Background</h4>
+              <select id="bgSelect"><option value="white">White</option><option value="blue">Blue</option><option value="gray">Gray</option></select>
             </div>
-
-            <!-- Middle Panel: Original Photo -->
-            <div class="middle-panel">
-                <div class="original-preview">
-                    <h3>Original Photo</h3>
-                    <canvas id="originalCanvas"></canvas>
-                </div>
+            <div class="option-card">
+              <h4 style="margin:0 0 8px 0">Enhance</h4>
+              <label><input type="checkbox" id="enhanceCheck" checked> Auto-enhance</label>
             </div>
-
-            <!-- Right Panel: Options & Processed Photo -->
-            <div class="right-panel">
-                <section class="controls-section" id="controlsSection" style="display: none;">
-                    <div class="country-selector">
-                        <label for="countrySelect">Country:</label>
-                        <select id="countrySelect">
-                            <option value="">-- Select --</option>
-                        </select>
-                    </div>
-
-                    <div class="photo-specs" id="photoSpecs"></div>
-
-                    <div class="options-grid">
-                        <div class="option-card">
-                            <h3>Background</h3>
-                            <select id="bgSelect">
-                                <option value="white">White</option>
-                                <option value="blue">Blue</option>
-                                <option value="gray">Gray</option>
-                            </select>
-                        </div>
-
-                        <div class="option-card">
-                            <h3>Enhance</h3>
-                            <label>
-                                <input type="checkbox" id="enhanceCheck" checked>
-                                Auto-enhance
-                            </label>
-                        </div>
-
-                        <div class="option-card">
-                            <h3>Format</h3>
-                            <select id="formatSelect">
-                                <option value="jpg">JPG</option>
-                                <option value="png">PNG</option>
-                                <option value="jpeg">JPEG</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="action-buttons">
-                        <button class="btn-primary" id="processBtn">Process Photo</button>
-                        <button class="btn-secondary" id="downloadBtn" style="display: none;">Download</button>
-                        <button class="btn-secondary" id="resetBtn">Reset</button>
-                    </div>
-                </section>
-
-                <div class="preview-container">
-                    <h3>Processed Photo</h3>
-                    <canvas id="previewCanvas"></canvas>
-                </div>
+            <div class="option-card">
+              <h4 style="margin:0 0 8px 0">Format</h4>
+              <select id="formatSelect"><option value="image/jpeg">JPG</option><option value="image/png">PNG</option></select>
             </div>
-        </main>
+          </div>
 
-        <footer>
-            <p>Created by D M Jahid | AI-Powered | <a href="https://github.com/dmjahidbd/passport-photo-resizer" target="_blank">GitHub</a></p>
-        </footer>
-    </div>
+          <div class="action-buttons">
+            <button class="btn-primary" id="processBtn">Process Photo</button>
+            <button class="btn-secondary hidden" id="downloadBtn">Download</button>
+            <button class="btn-secondary" id="resetBtn">Reset</button>
+          </div>
+        </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface"></script>
-    <script src="countries.js"></script>
-    <script src="app.js"></script>
+        <div style="margin-top:14px;color:var(--muted);font-size:13px">
+          <strong>Tips:</strong>
+          <ul style="margin:6px 0 0 16px;padding:0;color:var(--muted)">
+            <li>Use a clear face-forward photo</li>
+            <li>Avoid heavy shadows or low resolution</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Right: Upload / Original Preview (now right) -->
+      <div class="card">
+        <section class="upload-section">
+          <div class="upload-box" id="uploadBox" onclick="triggerFile()">
+            <div class="upload-icon">📷</div>
+            <h3>Uploaded Photo Preview</h3>
+            <p>Click or drag & drop an image (jpg/png)</p>
+            <input type="file" id="photoInput" accept="image/*" style="display:none">
+            <div style="margin-top:12px">
+              <button class="btn-primary" onclick="document.getElementById('photoInput').click()">Choose Photo</button>
+            </div>
+          </div>
+        </section>
+
+        <div class="original-preview" style="margin-top:12px">
+          <h3>Original Photo</h3>
+          <canvas id="originalCanvas" width="600" height="400"></canvas>
+        </div>
+
+        <div style="margin-top:12px;color:var(--muted);font-size:13px">
+          <div>Detected face box: <span id="faceInfo">—</span></div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p class="muted">This is a demo UI. Face detection uses BlazeFace when available.</p>
+    </footer>
+  </div>
+
+  <!-- Load TF and BlazeFace; script tags kept at bottom for progressive enhance -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface"></script>
+  <script>
+    // Minimal single-file JS to make the page functional
+    const input = document.getElementById('photoInput');
+    const originalCanvas = document.getElementById('originalCanvas');
+    const origCtx = originalCanvas.getContext('2d');
+    const previewCanvas = document.getElementById('previewCanvas');
+    const previewCtx = previewCanvas.getContext('2d');
+    const controls = document.getElementById('controlsSection');
+    const processBtn = document.getElementById('processBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const faceInfo = document.getElementById('faceInfo');
+    const photoSpecs = document.getElementById('photoSpecs');
+
+    let img = new Image();
+    let model = null;
+    let lastDet = null;
+
+    // Helpful default: target passport pixels (example: 35x45mm -> 413x531 px at 300dpi)
+    const TARGET_W = 413, TARGET_H = 531;
+    previewCanvas.width = TARGET_W; previewCanvas.height = TARGET_H;
+
+    async function loadModel(){
+      try{
+        model = await blazeface.load();
+        console.log('Blazeface ready');
+      }catch(e){console.warn('Blazeface failed to load', e)}
+    }
+    loadModel();
+
+    input.addEventListener('change', (e)=>{
+      const file = e.target.files[0];
+      if(!file) return;
+      const url = URL.createObjectURL(file);
+      img = new Image();
+      img.onload = async ()=>{
+        // fit canvas
+        originalCanvas.width = Math.min(img.width, 900);
+        originalCanvas.height = (img.height * (originalCanvas.width / img.width));
+        origCtx.clearRect(0,0,originalCanvas.width,originalCanvas.height);
+        origCtx.drawImage(img,0,0,originalCanvas.width,originalCanvas.height);
+        controls.style.display = 'block';
+        document.getElementById('countrySelect').value = 'auto';
+        photoSpecs.innerHTML = `Specs: <span class="muted">Target ${TARGET_W}x${TARGET_H}px</span>`;
+        lastDet = null; faceInfo.textContent = 'Searching...';
+        // detect
+        if(model){
+          try{
+            const returnTensors = false;
+            const predictions = await model.estimateFaces(originalCanvas, returnTensors);
+            if(predictions && predictions.length){
+              const p = predictions[0];
+              // box is top-left x,y,w,h in pixels
+              const box = p.box; // [x,y,width,height]
+              drawFaceBox(box);
+              lastDet = box;
+              faceInfo.textContent = `x:${Math.round(box[0])} y:${Math.round(box[1])} w:${Math.round(box[2])} h:${Math.round(box[3])}`;
+            } else {
+              faceInfo.textContent = 'No face detected';
+            }
+          }catch(err){
+            faceInfo.textContent = 'Detection error';
+            console.warn(err);
+          }
+        } else {
+          faceInfo.textContent = 'Model not loaded';
+        }
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
+    });
+
+    function drawFaceBox(box){
+      // Draw rectangle over original canvas
+      origCtx.save();
+      origCtx.strokeStyle = 'rgba(14,165,233,0.9)';
+      origCtx.lineWidth = 2;
+      origCtx.strokeRect(box[0], box[1], box[2], box[3]);
+      origCtx.restore();
+    }
+
+    processBtn.addEventListener('click', ()=>{
+      if(!img || !img.src) return alert('Please upload a photo first');
+      // If we have a detection, crop centered on the face; otherwise center crop
+      const srcW = originalCanvas.width, srcH = originalCanvas.height;
+      let sx, sy, sw, sh;
+      if(lastDet){
+        // Expand the face box slightly to include shoulders/headroom
+        const margin = 0.8;
+        sw = lastDet[2]*1.8; sh = lastDet[3]*2.2;
+        sx = lastDet[0] - (sw-lastDet[2])/2; sy = lastDet[1] - (sh-lastDet[3])*0.32;
+      } else {
+        // center crop based on aspect ratio
+        const ar = TARGET_W / TARGET_H;
+        if(srcW/srcH > ar){
+          // image is wider
+          sh = srcH; sw = sh * ar; sx = (srcW - sw)/2; sy = 0;
+        } else {
+          sw = srcW; sh = sw / ar; sx = 0; sy = (srcH - sh)/2;
+        }
+      }
+      // clamp
+      sx = Math.max(0, Math.min(sx, srcW - sw)); sy = Math.max(0, Math.min(sy, srcH - sh));
+
+      // draw to preview with required size
+      previewCtx.clearRect(0,0,TARGET_W,TARGET_H);
+      // optional auto-enhance: simple contrast adjustment using canvas filter
+      if(document.getElementById('enhanceCheck').checked){
+        // copy region to temp canvas
+        const tmp = document.createElement('canvas'); tmp.width = sw; tmp.height = sh; const tctx = tmp.getContext('2d');
+        tctx.drawImage(originalCanvas, sx, sy, sw, sh, 0, 0, sw, sh);
+        // basic brightness/contrast: getImageData (costly for big images)
+        try{
+          const imgd = tctx.getImageData(0,0,sw,sh);
+          const d = imgd.data;
+          // cheap linear contrast boost
+          const contrast = 1.08; const brightness = 4;
+          for(let i=0;i<d.length;i+=4){
+            for(let c=0;c<3;c++){
+              let v = d[i+c]; v = (v-128)*contrast + 128 + brightness; d[i+c] = Math.max(0,Math.min(255,v));
+            }
+          }
+          tctx.putImageData(imgd,0,0);
+          previewCtx.drawImage(tmp,0,0,sw,sh,0,0,TARGET_W,TARGET_H);
+        }catch(e){
+          // fallback
+          previewCtx.drawImage(originalCanvas,sx,sy,sw,sh,0,0,TARGET_W,TARGET_H);
+        }
+      } else {
+        previewCtx.drawImage(originalCanvas,sx,sy,sw,sh,0,0,TARGET_W,TARGET_H);
+      }
+
+      // background replacement simple (if user wants white/blue/gray)
+      const bg = document.getElementById('bgSelect').value;
+      if(bg !== 'none'){
+        // create temporary and composite over solid background
+        const tmp2 = document.createElement('canvas'); tmp2.width = TARGET_W; tmp2.height = TARGET_H; const t2 = tmp2.getContext('2d');
+        t2.fillStyle = (bg === 'white')? '#fff' : (bg === 'blue')? '#2b6cb0': '#9ca3af';
+        t2.fillRect(0,0,TARGET_W,TARGET_H);
+        t2.drawImage(previewCanvas,0,0);
+        previewCtx.clearRect(0,0,TARGET_W,TARGET_H);
+        previewCtx.drawImage(tmp2,0,0);
+      }
+
+      downloadBtn.classList.remove('hidden');
+      downloadBtn.onclick = ()=>{
+        const fmt = document.getElementById('formatSelect').value;
+        const data = previewCanvas.toDataURL(fmt, 0.95);
+        const a = document.createElement('a'); a.href = data; a.download = 'passport_photo.' + (fmt.includes('png')? 'png':'jpg'); document.body.appendChild(a); a.click(); a.remove();
+      };
+    });
+
+    resetBtn.addEventListener('click', ()=>{
+      origCtx.clearRect(0,0,originalCanvas.width,originalCanvas.height);
+      previewCtx.clearRect(0,0,previewCanvas.width,previewCanvas.height);
+      input.value = '';
+      controls.style.display = 'none';
+      downloadBtn.classList.add('hidden');
+      faceInfo.textContent = '—';
+    });
+
+    // small helpers: drag-drop
+    const uploadBox = document.getElementById('uploadBox');
+    uploadBox.addEventListener('dragover', (e)=>{e.preventDefault(); uploadBox.style.opacity=0.9});
+    uploadBox.addEventListener('dragleave', (e)=>{uploadBox.style.opacity=1});
+    uploadBox.addEventListener('drop', (e)=>{e.preventDefault(); uploadBox.style.opacity=1; const f = e.dataTransfer.files[0]; if(f) { input.files = e.dataTransfer.files; input.dispatchEvent(new Event('change'))}});
+
+    function triggerFile(){ document.getElementById('photoInput').click(); }
+
+    // Populate country select with a few common presets (expandable)
+    const countries = [
+      {name:'Auto (35x45 mm)', w:413,h:531},
+      {name:'India (35x45 mm)', w:413,h:531},
+      {name:'USA (2x2 in)', w:600,h:600},
+      {name:'UK (35x45 mm)', w:413,h:531}
+    ];
+    const cs = document.getElementById('countrySelect');
+    countries.forEach(c=>{ const opt = document.createElement('option'); opt.value = JSON.stringify({w:c.w,h:c.h}); opt.textContent = c.name; cs.appendChild(opt); });
+    cs.addEventListener('change', ()=>{
+      const val = cs.value;
+      if(val && val!=='auto'){
+        const t = JSON.parse(val); previewCanvas.width = t.w; previewCanvas.height = t.h; photoSpecs.innerHTML = `Specs: <span class="muted">${t.w}x${t.h}px</span>`;
+      } else { previewCanvas.width = TARGET_W; previewCanvas.height = TARGET_H; photoSpecs.innerHTML = `Specs: <span class="muted">Target ${TARGET_W}x${TARGET_H}px</span>`}
+    });
+
+    // Accessibility: keyboard trigger
+    document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') resetBtn.click() });
+
+  </script>
 </body>
 </html>
