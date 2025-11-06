@@ -104,6 +104,21 @@ function displayImage(img) {
     canvas.width = width;
     canvas.height = height;
     ctx.drawImage(img, 0, 0, width, height);
+
+        // Display original photo
+    const originalContainer = document.getElementById('originalContainer');
+    const originalCanvas = document.getElementById('originalCanvas');
+    const originalCtx = originalCanvas.getContext('2d');
+    
+    // Show original photo container
+    originalContainer.style.display = 'flex';
+    
+    // Set original canvas dimensions to match uploaded image
+    originalCanvas.width = img.width;
+    originalCanvas.height = img.height;
+    
+    // Draw original image
+    originalCtx.drawImage(img, 0, 0);
 }
 
 // Handle country selection
