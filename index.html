@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passport Photo Resizer - AI-Powered Tool</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌍 Passport Photo Resizer</h1>
+            <p>AI-powered photo resizer with face detection for 190+ countries</p>
+        </header>
+
+        <main>
+            <section class="upload-section">
+                <div class="upload-box" id="uploadBox">
+                    <div class="upload-icon">📷</div>
+                    <h3>Upload Your Photo</h3>
+                    <p>Click or drag and drop your photo here</p>
+                    <input type="file" id="photoInput" accept="image/*" hidden>
+                    <button class="btn-primary" onclick="document.getElementById('photoInput').click()">Choose Photo</button>
+                </div>
+            </section>
+
+            <section class="controls-section" id="controlsSection" style="display: none;">
+                <div class="country-selector">
+                    <label for="countrySelect">Select Country:</label>
+                    <select id="countrySelect">
+                        <option value="">-- Select Country --</option>
+                    </select>
+                </div>
+
+                <div class="photo-specs" id="photoSpecs"></div>
+
+                <div class="options-grid">
+                    <div class="option-card">
+                        <h3>Background</h3>
+                        <select id="bgSelect">
+                            <option value="white">White</option>
+                            <option value="blue">Blue</option>
+                            <option value="gray">Gray</option>
+                            <option value="remove">Remove/Transparent</option>
+                        </select>
+                    </div>
+
+                    <div class="option-card">
+                        <h3>Enhancement</h3>
+                        <label>
+                            <input type="checkbox" id="enhanceCheck" checked>
+                            Auto-enhance quality
+                        </label>
+                    </div>
+
+                    <div class="option-card">
+                        <h3>Export Format</h3>
+                        <select id="formatSelect">
+                            <option value="jpg">JPG</option>
+                            <option value="png">PNG</option>
+                            <option value="jpeg">JPEG</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="preview-container">
+                    <canvas id="previewCanvas"></canvas>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn-primary" id="processBtn">Process Photo</button>
+                    <button class="btn-secondary" id="downloadBtn" style="display: none;">Download Photo</button>
+                    <button class="btn-secondary" id="resetBtn">Reset</button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Created with ❤️ | Face detection powered by AI | <a href="https://github.com/dmjahidbd/passport-photo-resizer" target="_blank">GitHub</a></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface"></script>
+    <script src="countries.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
